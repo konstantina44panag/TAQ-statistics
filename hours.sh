@@ -6,7 +6,6 @@ scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq2005taq05ad/div_2005
 scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq2005taq05ad/mast_200503.sas7bdat.* .             # 219kb
 
 #FOR COMPLETE_NBBO
-scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/complete_nbbo_20090302.sas7bdat.* . 
 time(
 gzip -dc complete_nbbo_20090302.sas7bdat.gz > temp.sas7bdat
 sas7bdat_to_csv temp.sas7bdat | grep -v "Successfully converted" > temp.csv
