@@ -27,7 +27,7 @@ bzip2 -dk MSFT_ctm_20090302.csv.bz2
 head -n 2 temp.csv > header.txt
 cat header.txt MSFT_ctm_20090302.csv > trades_data.csv
 
-########################################################################
+
 #1 Algorithms for trade signs
 #I implement the code by Jukartis (2022): https://github.com/jktis/
 python3 setup.py build_ext -i
