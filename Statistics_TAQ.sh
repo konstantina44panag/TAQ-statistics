@@ -1,7 +1,7 @@
 #I estimate statistics for the MSFT TAQ data of 02/03/2009
 #Files Download: 
-#scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/complete_nbbo_20090302.sas7bdat.* .   
-#scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/ctm_20090302.sas7bdat.* .      
+scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/complete_nbbo_20090302.sas7bdat.* .   
+scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/ctm_20090302.sas7bdat.* .      
 #Then the conversion of files to csv follows, and the creation of stock specific files:     
 #FOR COMPLETE_NBBO FILES
 gzip -dc complete_nbbo_20090302.sas7bdat.gz > temp.sas7bdat
@@ -45,4 +45,5 @@ python3 setup.py build_ext -i
 ./dollar_bar.py
 
 #3 Variables
+./preparation.py
 ./variables.py
