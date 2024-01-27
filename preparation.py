@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import datetime
 import subprocess
-
+from bar_analysis import MarketBars
 subprocess.run(["python3", "sign_algorithms.py"])
 from sign_algorithms import tradessigns
 
@@ -51,10 +51,18 @@ sells_df = sells_df[(sells_df["time"] >= start_time) & (sells_df["time"] < end_t
 Ask = Ask[(Ask["time"] >= start_time) & (Ask["time"] < end_time)]
 Bid = Bid[(Bid["time"] >= start_time) & (Bid["time"] < end_time)]
 
-
 df = df.dropna(subset=["time"])
 buys_df = buys_df.dropna(subset=["time"])
 sells_df = sells_df.dropna(subset=["time"])
 Ask = Ask.dropna(subset=["time"])
 Bid=Bid.dropna(subset=["time"])
 
+market_bars = MarketBars(df, Ask, Bid, 200000, 2500000)
+volume_bars = market_bars.compute_volume_bars()
+dollar_bars = market_bars.compute_dollar_bars()
+time_bars = market_bars.compute_time_bars()
+
+# Printing the results
+print(volume_bars)
+print(dollar_bars)
+print(time_bars)
