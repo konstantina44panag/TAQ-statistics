@@ -12,15 +12,10 @@ cat header.txt MSFT_complete_nbbo_20090302.csv > quotes_data.csv
 head -n 2 temp.csv > header.txt
 cat header.txt MSFT_ctm_20090302.csv > trades_data.csv
 
+#By running variables.py, the trade sign algorithm, the creation of bar variables, and the computation of variables are executes for the stock files.
 
-#1 Algorithms for trade signs
-#I implement the code by Jukartis (2022): https://github.com/jktis/
-python3 setup.py build_ext -i
-./sign_algorithms.py
+#(1 Algorithms for trade signs, I implement the code by Jukartis (2022): https://github.com/jktis/ in sign_algorithms.py)
 
+#(2 Creation of bars in bar_analysis.py)
 
-#2 Creation of bars
-./bar_analysis.py
-
-#3 Variables
-./variables.py
+#(3 Creation of Variables in variables.py)
