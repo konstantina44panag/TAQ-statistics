@@ -5,7 +5,7 @@ import pandas as pd
 from classifytrades import TradeClassification
 # Set the maximum number of rows to display
 pd.set_option('display.max_rows', 500)
-
+#python3 setup.py build_ext -i
 
 TRADES_DATA_PATH = "/home/konstantina/ctm/trades_data.csv"
 QUOTES_DATA_PATH = "/home/konstantina/complete_nbbo/quotes_data.csv"
@@ -57,16 +57,12 @@ df["time"] = df["time"].apply(time_to_seconds)
 Ask["time"] = Ask["time"].apply(time_to_seconds)
 Bid["time"] = Bid["time"].apply(time_to_seconds)
 
-print(df.head(100))
-print(Ask.head(100))
-print(Bid.head(100))
-
-
 tc = TradeClassification(df, Ask=Ask, Bid=Bid)
-tc.classify(method="bvc", freq=0, reduce_precision=True)
+tc.classify(method="ds_2", freq=3, reduce_precision=True)
 
 print(tc.df_tr.head(200))
-
+print(tc.Ask.head(200))
+print(tc.Bid.head(200))
 
 # Function to Convert Seconds to Time Format
 def seconds_to_time(seconds):
@@ -77,4 +73,5 @@ def seconds_to_time(seconds):
 
 
 tc.df_tr["regular_timestamp"] = tc.df_tr["time_org"].apply(seconds_to_time)
-print(tc.df_tr.head(200))
+tradessigns= tc.df_tr
+
