@@ -20,15 +20,7 @@ python3 setup.py build_ext -i
 
 
 #2 Creation of bars
-#2.1time bars
-./time_bar.py
-
-#2.2volume bars
-./volume_bar.py
-
-#2.3dollar bars
-./dollar_bar.py
+./bar_analysis.py
 
 #3 Variables
-./preparation.py
 ./variables.py
