@@ -27,20 +27,5 @@ bzip2 -dk MSFT_ctm_20090302.csv.bz2
 head -n 2 temp.csv > header.txt
 cat header.txt MSFT_ctm_20090302.csv > trades_data.csv
 
-########################################################################
-#1 Algorithms for trade signs
-#I implement the code by Jukartis (2022): https://github.com/jktis/
-./sign_algorithms.py
-
-#2 Creation of bars
-#2.1time bars
-./time_bar.py
-
-#2.2volume bars
-./volume_bar.py
-
-#2.3dollar bars
-./dollar_bar.py
-
-#3 Variables
 ./variables.py
+#By running variables.py, the trade sign algorithm, the creation of bar variables, and the computation of variables are executes for the stock files.
