@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import subprocess
 
-# create 1-minute time bars
 subprocess.run(["python3", "preparation.py"])
 from preparation import df, buys_df, sells_df, Ask, Bid
 
@@ -69,9 +68,9 @@ def custom_agg_function(data):
 
 aggr_buys_1min = buys_df.resample("1T", on="time").apply(custom_agg_function)
 aggr_buys_1min = aggr_buys_1min.rename("aggressive buyer's price")
-print(aggr_buys_1min)
 agrr_sells_1min= sells_df.resample("1T", on="time").apply(custom_agg_function)
 agrr_sells_1min = agrr_sells_1min.rename("aggressive seller's price")
+print(aggr_buys_1min)
 print(agrr_sells_1min)
 
 
@@ -157,47 +156,41 @@ print(one_minute_bins_post)
 
 
 #8. Time weighted version of bid/ask prices and size (in dollars) of best bid and ask (Holden and Jacobsen 2014)
-def collect_values(series):
-    return list(series.values) 
-Ask_resampled = Ask.resample('1T', on="time").agg({
-    'price': ['mean', collect_values],
-    'vol': ['mean', collect_values]  
-})
-Bid_resampled = Bid.resample('1T', on="time").agg({
-    'price': ['mean', collect_values],
-    'vol': ['mean', collect_values]
-})
+def calculate_twap_and_volume(group):
+    durations = group.index.to_series().diff().fillna(pd.Timedelta(seconds=0)).dt.total_seconds()
+    time_weighted_prices = group['price'] * durations
+    time_weighted_volumes = group['vol'] * durations
+    total_time = durations.sum()
+    twap = time_weighted_prices.sum() / total_time if total_time != 0 else 0
+    twav = time_weighted_volumes.sum() / total_time if total_time != 0 else 0
 
-Ask_resampled.columns = ['price_mean', 'price_details', 'vol_sum', 'vol_details']
-Bid_resampled.columns = ['price_mean', 'price_details', 'vol_mean', 'vol_details']
+    return pd.Series({'TWAP': twap, 'TWAV': twav})
 
-def interpolate_timestamps(row):
-    I = len(row['price_details'])  
-    if I > 0:
-        i = np.arange(1, I + 1)
-        interpolated_times = row.name + pd.to_timedelta(((2 * i - 1) / (2 * I)), unit='s')
-        return interpolated_times
-    else:
-        return pd.Series()
-
-Ask_interpolated_times = Ask_resampled.apply(interpolate_timestamps, axis=1).explode().reset_index()
-Bid_interpolated_times = Bid_resampled.apply(interpolate_timestamps, axis=1).explode().reset_index()
-
-Ask_interpolated_times['price'] = Ask_resampled['price_details'].explode().values
-Ask_interpolated_times['vol'] = Ask_resampled['vol_details'].explode().values
-
-Bid_interpolated_times['price'] = Bid_resampled['price_details'].explode().values
-Bid_interpolated_times['vol'] = Bid_resampled['vol_details'].explode().values
-
-print(Ask_interpolated_times)
-print(Bid_interpolated_times)
+df.set_index('time', inplace=True)
+Ask.set_index('time', inplace=True)
+Bid.set_index('time', inplace=True)
+twap_trades = df.resample('1T').apply(calculate_twap_and_volume)
+twap_asks = Ask.resample('1T').apply(calculate_twap_and_volume)
+twap_bids = Bid.resample('1T').apply(calculate_twap_and_volume)
+print(twap_trades)
+print(twap_asks)
+print(twap_bids)
 
 #9. Total Volume traded over interval
+if df.index.name == 'time':
+    df.reset_index(inplace=True)
+
+if Ask.index.name == 'time':
+    Ask.reset_index(inplace=True)
+
+if Bid.index.name == 'time':
+    Bid.reset_index(inplace=True)
+    
 df_resampled = df.resample("1T", on="time").agg({"vol": "sum"})
-print(df_resampled)
 Ask_resampled = Ask.resample("1T", on="time").agg({"vol": "sum"})
-print(Ask_resampled)
 Bid_resampled = Bid.resample("1T", on="time").agg({"vol": "sum"})
+print(df_resampled)
+print(Ask_resampled)
 print(Bid_resampled)
 
 
