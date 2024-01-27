@@ -5,7 +5,8 @@ import subprocess
 
 # create 1-minute time bars
 subprocess.run(["python3", "preparation.py"])
-from preparation import df, Ask, Bid
+from preparation import df, buys_df, sells_df, Ask, Bid
+
 
 #1,2,3. The last trade/bid/ask price, volume, and timestamp
 trades_1min = df.resample("1T", on="time").agg(
@@ -56,11 +57,8 @@ print(asks_1min)
 print(bids_1min)
 
 #4.Last price at which an aggressive buy/sell order for $10,000 would execute
-df["value"] = df["price"] * df["vol"]
-Ask["value"] = Ask["price"] * Ask["vol"]
-Bid["value"] = Bid["price"] * Bid["vol"]
-
-
+buys_df["value"] = buys_df["price"] * buys_df["vol"]
+sells_df["value"] = sells_df["price"] * sells_df["vol"]
 def custom_agg_function(data):
     filtered_trades = data[data["value"] >= 10000]
     if not filtered_trades.empty:
@@ -69,15 +67,12 @@ def custom_agg_function(data):
         return np.nan
 
 
-aggr_trades_1min = df.resample("1T", on="time").apply(custom_agg_function)
-aggr_trades_1min = aggr_trades_1min.rename("aggressive trade price")
-print(aggr_trades_1min)
-agrr_ask_1min= Ask.resample("1T", on="time").apply(custom_agg_function)
-agrr_ask_1min = agrr_ask_1min.rename("aggressive ask price")
-print(agrr_ask_1min)
-agrr_bid_1min= Bid.resample("1T", on="time").apply(custom_agg_function)
-agrr_bid_1min = agrr_bid_1min.rename("aggressive ask price")
-print(agrr_bid_1min)
+aggr_buys_1min = buys_df.resample("1T", on="time").apply(custom_agg_function)
+aggr_buys_1min = aggr_buys_1min.rename("aggressive buyer's price")
+print(aggr_buys_1min)
+agrr_sells_1min= sells_df.resample("1T", on="time").apply(custom_agg_function)
+agrr_sells_1min = agrr_sells_1min.rename("aggressive seller's price")
+print(agrr_sells_1min)
 
 
 #5.VWAP of trades (and separately buys/sells) over interval
@@ -94,30 +89,30 @@ def custom_agg_function(data):
 vwap_trades_1min = df.resample("1T", on="time").apply(custom_agg_function)
 vwap_trades_1min = vwap_trades_1min.rename("volume_weighted_price")
 
-vwap_asks_1min = Ask.resample("1T", on="time").agg(custom_agg_function)
-vwap_asks_1min = vwap_asks_1min.rename("volume_weighted_price")
+vwap_buys_1min = buys_df.resample("1T", on="time").agg(custom_agg_function)
+vwap_buys_1min = vwap_buys_1min.rename("volume_weighted_price")
 
-vwap_bids_1min = Bid.resample("1T", on="time").agg(custom_agg_function)
-vwap_bids_1min = vwap_bids_1min.rename("volume_weighted_price")
+vwap_sells_1min = sells_df.resample("1T", on="time").agg(custom_agg_function)
+vwap_sells_1min = vwap_sells_1min.rename("volume_weighted_price")
 
 print(vwap_trades_1min)
-print(vwap_asks_1min)
-print(vwap_bids_1min)
+print(vwap_buys_1min)
+print(vwap_sells_1min)
 
 
 #6. Simple average of trade prices (and separately buys/sells) over interval
 average_trades_1min = df.resample("1T", on="time").agg({"price": "mean"})
-average_asks_1min = Ask.resample("1T", on="time").agg({"price": "mean"})
-average_bids_1min = Bid.resample("1T", on="time").agg({"price": "mean"})
+average_buys_1min = buys_df.resample("1T", on="time").agg({"price": "mean"})
+average_sells_1min = sells_df.resample("1T", on="time").agg({"price": "mean"})
 
 # Rename the columns 
 average_trades_1min = average_trades_1min.rename(columns={"price": "mean_price"})
-average_asks_1min = average_asks_1min.rename(columns={"price": "mean_price"})
-average_bids_1min = average_bids_1min.rename(columns={"price": "mean_price"})
+average_buys_1min = average_buys_1min.rename(columns={"price": "mean_price"})
+average_sells_1min = average_sells_1min.rename(columns={"price": "mean_price"})
 
 print(average_trades_1min)
-print(average_asks_1min)
-print(average_bids_1min)
+print(average_buys_1min)
+print(average_sells_1min)
 
 #7. Volume weighted average pre/post-trade bid/ask prices (measured just before each trade and weighted by the size of each trade)
 
@@ -175,9 +170,6 @@ Bid_resampled = Bid.resample('1T', on="time").agg({
 
 Ask_resampled.columns = ['price_mean', 'price_details', 'vol_sum', 'vol_details']
 Bid_resampled.columns = ['price_mean', 'price_details', 'vol_mean', 'vol_details']
-
-print(Ask_resampled)
-print(Bid_resampled)
 
 def interpolate_timestamps(row):
     I = len(row['price_details'])  
