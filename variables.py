@@ -51,9 +51,9 @@ trades_1min["last_trade_time"] = trades_1min["last_trade_time"].dt.strftime(
 )
 asks_1min["last_trade_time"] = asks_1min["last_trade_time"].dt.strftime("%H:%M:%S.%f")
 bids_1min["last_trade_time"] = bids_1min["last_trade_time"].dt.strftime("%H:%M:%S.%f")
-print(trades_1min)
-print(asks_1min)
-print(bids_1min)
+trades_1min.to_csv("/home/konstantina/Statistics_Taq/output/trades_123.csv", index=True)
+asks_1min.to_csv("/home/konstantina/Statistics_Taq/output/asks_123.csv", index=True)
+bids_1min.to_csv("/home/konstantina/Statistics_Taq/output/bids_123.csv", index=True)
 
 #4.Last price at which an aggressive buy/sell order for $10,000 would execute
 buys_df["value"] = buys_df["price"] * buys_df["vol"]
@@ -70,9 +70,9 @@ aggr_buys_1min = buys_df.resample("1T", on="time").apply(custom_agg_function)
 aggr_buys_1min = aggr_buys_1min.rename("aggressive buyer's price")
 agrr_sells_1min= sells_df.resample("1T", on="time").apply(custom_agg_function)
 agrr_sells_1min = agrr_sells_1min.rename("aggressive seller's price")
-print(aggr_buys_1min)
-print(agrr_sells_1min)
 
+aggr_buys_1min.to_csv("/home/konstantina/Statistics_Taq/output/buys_4.csv", index=True)
+agrr_sells_1min.to_csv("/home/konstantina/Statistics_Taq/output/sells_4.csv", index=True)
 
 #5.VWAP of trades (and separately buys/sells) over interval
 def custom_agg_function(data):
@@ -94,10 +94,9 @@ vwap_buys_1min = vwap_buys_1min.rename("volume_weighted_price")
 vwap_sells_1min = sells_df.resample("1T", on="time").agg(custom_agg_function)
 vwap_sells_1min = vwap_sells_1min.rename("volume_weighted_price")
 
-print(vwap_trades_1min)
-print(vwap_buys_1min)
-print(vwap_sells_1min)
-
+vwap_trades_1min.to_csv("/home/konstantina/Statistics_Taq/output/trades_5.csv", index=True)
+vwap_buys_1min.to_csv("/home/konstantina/Statistics_Taq/output/buys_5.csv", index=True)
+vwap_sells_1min.to_csv("/home/konstantina/Statistics_Taq/output/sells_5.csv", index=True)
 
 #6. Simple average of trade prices (and separately buys/sells) over interval
 average_trades_1min = df.resample("1T", on="time").agg({"price": "mean"})
@@ -109,9 +108,9 @@ average_trades_1min = average_trades_1min.rename(columns={"price": "mean_price"}
 average_buys_1min = average_buys_1min.rename(columns={"price": "mean_price"})
 average_sells_1min = average_sells_1min.rename(columns={"price": "mean_price"})
 
-print(average_trades_1min)
-print(average_buys_1min)
-print(average_sells_1min)
+average_trades_1min.to_csv("/home/konstantina/Statistics_Taq/output/trades_6.csv", index=True)
+average_buys_1min.to_csv("/home/konstantina/Statistics_Taq/output/buys_6.csv", index=True)
+average_sells_1min.to_csv("/home/konstantina/Statistics_Taq/output/sells_6.csv", index=True)
 
 #7. Volume weighted average pre/post-trade bid/ask prices (measured just before each trade and weighted by the size of each trade)
 
@@ -136,7 +135,8 @@ one_minute_bins = merged_df.resample('1T').agg(aggregation_rules)
 
 one_minute_bins['vwap_bid'] = one_minute_bins['weighted_bid'] / one_minute_bins['vol']
 one_minute_bins['vwap_ask'] = one_minute_bins['weighted_ask'] / one_minute_bins['vol']
-print(one_minute_bins)
+
+one_minute_bins.to_csv("/home/konstantina/Statistics_Taq/output/pretrades_7.csv", index=True)
 
 post_merged_df = pd.merge_asof(df, Ask, on='time', direction='forward', suffixes=('', '_ask'))
 post_merged_df = pd.merge_asof(post_merged_df, Bid, on='time', direction='forward', suffixes=('', '_bid'))
@@ -155,7 +155,8 @@ aggregation_rules = {
 one_minute_bins_post = post_merged_df.resample('1T', on='time').agg(aggregation_rules)
 one_minute_bins_post['vwap_bid'] = one_minute_bins_post['weighted_bid'] / one_minute_bins_post['vol']
 one_minute_bins_post['vwap_ask'] = one_minute_bins_post['weighted_ask'] / one_minute_bins_post['vol']
-print(one_minute_bins_post)
+
+one_minute_bins_post.to_csv("/home/konstantina/Statistics_Taq/output/posttrades_7.csv", index=True)
 
 
 #8. Time weighted version of bid/ask prices and size (in dollars) of best bid and ask 
@@ -175,9 +176,11 @@ Bid.set_index('time', inplace=True)
 twap_trades = df.resample('1T').apply(calculate_twap_and_volume)
 twap_asks = Ask.resample('1T').apply(calculate_twap_and_volume)
 twap_bids = Bid.resample('1T').apply(calculate_twap_and_volume)
-print(twap_trades)
-print(twap_asks)
-print(twap_bids)
+
+twap_trades.to_csv("/home/konstantina/Statistics_Taq/output/trades_8.csv", index=True)
+twap_asks.to_csv("/home/konstantina/Statistics_Taq/output/asks_8.csv", index=True)
+twap_bids.to_csv("/home/konstantina/Statistics_Taq/output/bids_8.csv", index=True)
+
 
 #9. Total Volume traded over interval
 if df.index.name == 'time':
@@ -192,9 +195,10 @@ if Bid.index.name == 'time':
 df_resampled = df.resample("1T", on="time").agg({"vol": "sum"})
 Ask_resampled = Ask.resample("1T", on="time").agg({"vol": "sum"})
 Bid_resampled = Bid.resample("1T", on="time").agg({"vol": "sum"})
-print(df_resampled)
-print(Ask_resampled)
-print(Bid_resampled)
+
+df_resampled.to_csv("/home/konstantina/Statistics_Taq/output/trades_9.csv", index=True)
+Ask_resampled.to_csv("/home/konstantina/Statistics_Taq/output/asks_9.csv", index=True)
+Bid_resampled.to_csv("/home/konstantina/Statistics_Taq/output/bids_9.csv", index=True)
 
 
 #10. Number of bid/ask price/volume changes over interval
@@ -213,6 +217,9 @@ Ask_changes = Ask.resample("1T", on="time").apply(
 Bid_changes = Bid.resample("1T", on="time").apply(
     {"price": count_changes, "vol": count_changes}
 )
-print(trades_changes)
-print(Ask_changes)
-print(Bid_changes)
+
+trades_changes.to_csv("/home/konstantina/Statistics_Taq/output/trades_10.csv", index=True)
+Ask_changes.to_csv("/home/konstantina/Statistics_Taq/output/asks_10.csv", index=True)
+Bid_changes.to_csv("/home/konstantina/Statistics_Taq/output/bids_10.csv", index=True)
+
+subprocess.run("gzip /home/konstantina/Statistics_Taq/output/*.csv", shell=True)
