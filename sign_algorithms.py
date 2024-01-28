@@ -60,10 +60,6 @@ Bid["time"] = Bid["time"].apply(time_to_seconds)
 tc = TradeClassification(df, Ask=Ask, Bid=Bid)
 tc.classify(method="ds_2", freq=3, reduce_precision=True)
 
-print(tc.df_tr.head(200))
-print(tc.Ask.head(200))
-print(tc.Bid.head(200))
-
 # Function to Convert Seconds to Time Format
 def seconds_to_time(seconds):
     hours = int(seconds // 3600)
@@ -74,4 +70,5 @@ def seconds_to_time(seconds):
 
 tc.df_tr["regular_timestamp"] = tc.df_tr["time_org"].apply(seconds_to_time)
 tradessigns= tc.df_tr
+tradessigns.to_csv("/home/konstantina/Statistics_Taq/output/tradessigns.csv", index=True)
 
