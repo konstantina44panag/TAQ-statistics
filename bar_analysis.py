@@ -14,30 +14,30 @@ class MarketBars:
 
     def compute_volume_bars(self):
         volume_bars_trades = self.df.groupby(self.bar(np.cumsum(self.df["vol"]), self.volume_threshold)).agg(
-            {"price": "ohlc", "vol": "sum"}
+            {"time": "last", "price": "ohlc", "vol": "sum"}
         )
         volume_bars_ask = self.ask.groupby(self.bar(np.cumsum(self.ask["vol"]), self.volume_threshold)).agg(
-            {"price": "ohlc", "vol": "sum"}
+             {"time": "last", "price": "ohlc", "vol": "sum"}
         )
         volume_bars_bid = self.bid.groupby(self.bar(np.cumsum(self.bid["vol"]), self.volume_threshold)).agg(
-            {"price": "ohlc", "vol": "sum"}
+             {"time": "last", "price": "ohlc", "vol": "sum"}
         )
         return volume_bars_trades, volume_bars_ask, volume_bars_bid
 
     def compute_dollar_bars(self):
         self.df["value"] = self.df["price"] * self.df["vol"]
         dollar_bars_trades = self.df.groupby(self.bar(np.cumsum(self.df["value"]), self.market_value)).agg(
-            {"price": "ohlc", "vol": "sum", "value" : "sum"}
+            {"time": "last", "price": "ohlc", "vol": "sum", "value" : "sum"}
         )
 
         self.ask["value"] = self.ask["price"] * self.ask["vol"]
         dollar_bars_ask = self.ask.groupby(self.bar(np.cumsum(self.ask["value"]), self.market_value)).agg(
-            {"price": "ohlc", "vol": "sum", "value" : "sum"}
+            {"time": "last", "price": "ohlc", "vol": "sum", "value" : "sum"}
         )
 
         self.bid["value"] = self.bid["price"] * self.bid["vol"]
         dollar_bars_bid = self.bid.groupby(self.bar(np.cumsum(self.bid["value"]), self.market_value)).agg(
-            {"price": "ohlc", "vol": "sum", "value" : "sum"}
+            {"time": "last", "price": "ohlc", "vol": "sum", "value" : "sum"}
         )
         return dollar_bars_trades, dollar_bars_ask, dollar_bars_bid
 
