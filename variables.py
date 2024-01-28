@@ -138,24 +138,27 @@ one_minute_bins['vwap_bid'] = one_minute_bins['weighted_bid'] / one_minute_bins[
 one_minute_bins['vwap_ask'] = one_minute_bins['weighted_ask'] / one_minute_bins['vol']
 print(one_minute_bins)
 
-post_trade_merged = pd.merge_asof(df.sort_values('time'), Ask.sort_values('time'), on='time', direction='forward', suffixes=('', '_ask'))
-post_trade_merged = pd.merge_asof(post_trade_merged, Bid.sort_values('time'), on='time', direction='forward', suffixes=('', '_bid'))
-post_trade_merged['weighted_price_bid'] = post_trade_merged['price_bid'] * post_trade_merged['vol']
-post_trade_merged['weighted_price_ask'] = post_trade_merged['price_ask'] * post_trade_merged['vol']
+post_merged_df = pd.merge_asof(df, Ask, on='time', direction='forward', suffixes=('', '_ask'))
+post_merged_df = pd.merge_asof(post_merged_df, Bid, on='time', direction='forward', suffixes=('', '_bid'))
+
+post_merged_df['weighted_bid'] = post_merged_df['price_bid'] * post_merged_df['vol']
+post_merged_df['weighted_ask'] = post_merged_df['price_ask'] * post_merged_df['vol']
 aggregation_rules = {
-    'weighted_price_bid': 'sum',
-    'weighted_price_ask': 'sum',
-    'vol': 'sum'
+    'price': 'mean',  
+    'vol': 'sum',   
+    'weighted_bid': 'sum',  
+    'weighted_ask': 'sum',  
+    'price_bid': 'mean',   
+    'price_ask': 'mean'     
 }
 
-one_minute_bins_post = post_trade_merged.resample('1T', on='time').agg(aggregation_rules)
-one_minute_bins_post['vwap_bid'] = one_minute_bins_post['weighted_price_bid'] / one_minute_bins_post['vol']
-one_minute_bins_post['vwap_ask'] = one_minute_bins_post['weighted_price_ask'] / one_minute_bins_post['vol']
+one_minute_bins_post = post_merged_df.resample('1T', on='time').agg(aggregation_rules)
+one_minute_bins_post['vwap_bid'] = one_minute_bins_post['weighted_bid'] / one_minute_bins_post['vol']
+one_minute_bins_post['vwap_ask'] = one_minute_bins_post['weighted_ask'] / one_minute_bins_post['vol']
 print(one_minute_bins_post)
 
 
-
-#8. Time weighted version of bid/ask prices and size (in dollars) of best bid and ask (Holden and Jacobsen 2014)
+#8. Time weighted version of bid/ask prices and size (in dollars) of best bid and ask 
 def calculate_twap_and_volume(group):
     durations = group.index.to_series().diff().fillna(pd.Timedelta(seconds=0)).dt.total_seconds()
     time_weighted_prices = group['price'] * durations
