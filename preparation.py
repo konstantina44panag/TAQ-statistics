@@ -58,11 +58,18 @@ Ask = Ask.dropna(subset=["time"])
 Bid=Bid.dropna(subset=["time"])
 
 market_bars = MarketBars(df, Ask, Bid, 200000, 2500000)
-volume_bars = market_bars.compute_volume_bars()
-dollar_bars = market_bars.compute_dollar_bars()
-time_bars = market_bars.compute_time_bars()
+volume_bars_trades, volume_bars_ask, volume_bars_bid = market_bars.compute_volume_bars()
+dollar_bars_trades, dollar_bars_ask, dollar_bars_bid = market_bars.compute_dollar_bars()
+ohlc_df, ohlc_ask, ohlc_bid = market_bars.compute_time_bars()
 
-# Printing the results
-print(volume_bars)
-print(dollar_bars)
-print(time_bars)
+# Export each DataFrame to a CSV file
+volume_bars_trades.to_csv("/home/konstantina/Statistics_Taq/output/volume_bars_trades.csv", index=True)
+volume_bars_ask.to_csv("/home/konstantina/Statistics_Taq/output/volume_bars_ask.csv", index=True)
+volume_bars_bid.to_csv("/home/konstantina/Statistics_Taq/output/volume_bars_bid.csv", index=True)
+dollar_bars_trades.to_csv("/home/konstantina/Statistics_Taq/output/dollar_bars_trades.csv", index=True)
+dollar_bars_ask.to_csv("/home/konstantina/Statistics_Taq/output/dollar_bars_ask.csv", index=True)
+dollar_bars_bid.to_csv("/home/konstantina/Statistics_Taq/output/dollar_bars_bid.csv", index=True)
+ohlc_df.to_csv("/home/konstantina/Statistics_Taq/output/ohlc_trades.csv", index=True)
+ohlc_ask.to_csv("/home/konstantina/Statistics_Taq/output/ohlc_asks.csv", index=True)
+ohlc_bid.to_csv("/home/konstantina/Statistics_Taq/output/ohlc_bids.csv", index=True)
+
