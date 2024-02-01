@@ -1,11 +1,6 @@
-#I estimate statistics for the MSFT TAQ data of 02/03/2009
-#Files Download: 
-#scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/complete_nbbo_20090302.sas7bdat.* .   
-#scp panagopkonst@memos1.troias.offices.aueb.gr:/taq93-23/taq_msec2009/m200903/ctm_20090302.sas7bdat.* .      
-#Then the conversion of files to csv follows, and the creation of stock specific files
-#MSFT_complete_nbbo_20090302.csv is created, but no headers
-#MSFT_ctm_20090302.csv is created, but no headers:
-
+#In Unix the datafiles undergo decompression, conversion to csv format, separation of stock-files and compression.*
+*Taqdata_csv_stock_files.sh
+#Also headers are added in unix:
 head -n 2 temp.csv > header.txt
 cat header.txt MSFT_complete_nbbo_20090302.csv > quotes_data.csv
 head -n 2 temp.csv > header.txt
