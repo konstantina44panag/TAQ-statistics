@@ -1,3 +1,38 @@
+#($ cat csv_to_hdf.slurm) :
+#!/bin/bash -l
+
+####################################
+#     SLURM Job Submission Script  #
+#                                  #
+# Submit script: sbatch submit_job.slurm #
+#                                  #
+####################################
+
+#SBATCH --job-name=process_sas_file    # Job name
+#SBATCH --output=process_sas_file.%j.out # Stdout (%j expands to jobId)
+#SBATCH --error=process_sas_file.%j.err # Stderr (%j expands to jobId)
+#SBATCH --ntasks=1                    # Number of tasks(processes)
+#SBATCH --nodes=1                     # Number of nodes requested
+#SBATCH --ntasks-per-node=1           # Tasks per node
+#SBATCH --cpus-per-task=1             # Threads per task
+#SBATCH --time=01:00:00               # walltime
+#SBATCH --mem=3G                     # memory per NODE
+#SBATCH --partition=compute           # Partition
+#SBATCH --account=pa240201              # Replace with your system project
+
+# Set up the environment
+if [ -z "${SLURM_CPUS_PER_TASK+x}" ]; then
+    export OMP_NUM_THREADS=1
+else
+    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+fi
+
+
+
+# Execute the task script with the SLURM_ARRAY_TASK_ID as an argument
+srun bash /work/pa24/kpanag/scripts/csv_to_hdf.sh
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #((myenv) [kpanag@login02 scripts]$ cat csv_to_hdf.sh) :
 #!/bin/bash
 set -eu
