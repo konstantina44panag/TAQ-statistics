@@ -33,26 +33,24 @@ trades_1min.rename(
 )
 asks_1min.rename(
     columns={
-        "price": "last_trade_price",
-        "vol": "last_trade_vol",
-        "time": "last_trade_time",
+        "price": "last_ask_price",
+        "vol": "last_ask_vol",
+        "time": "last_ask_time",
     },
     inplace=True,
 )
 bids_1min.rename(
     columns={
-        "price": "last_trade_price",
-        "vol": "last_trade_vol",
-        "time": "last_trade_time",
+        "price": "last_bid_price",
+        "vol": "last_bid_vol",
+        "time": "last_bid_time",
     },
     inplace=True,
 )
 
-trades_1min["last_trade_time"] = trades_1min["last_trade_time"].dt.strftime(
-    "%H:%M:%S.%f"
-)
-asks_1min["last_trade_time"] = asks_1min["last_trade_time"].dt.strftime("%H:%M:%S.%f")
-bids_1min["last_trade_time"] = bids_1min["last_trade_time"].dt.strftime("%H:%M:%S.%f")
+trades_1min["last_trade_time"] = trades_1min["last_trade_time"].dt.strftime("%H:%M:%S.%f")
+asks_1min["last_ask_time"] = asks_1min["last_ask_time"].dt.strftime("%H:%M:%S.%f")
+bids_1min["last_bid_time"] = bids_1min["last_bid_time"].dt.strftime("%H:%M:%S.%f")
 trades_1min.to_csv("/home/konstantina/Statistics_Taq/output/trades_123.csv", index=True)
 asks_1min.to_csv("/home/konstantina/Statistics_Taq/output/asks_123.csv", index=True)
 bids_1min.to_csv("/home/konstantina/Statistics_Taq/output/bids_123.csv", index=True)
@@ -195,10 +193,14 @@ if Bid.index.name == 'time':
     Bid.reset_index(inplace=True)
     
 trades_resampled = trades.resample("1T", on="time").agg({"vol": "sum"})
+Buys_trades_resampled = Buys_trades.resample("1T", on="time").agg({"vol": "sum"})
+Sells_trades_resampled = Sells_trades.resample("1T", on="time").agg({"vol": "sum"})
 Ask_resampled = Ask.resample("1T", on="time").agg({"vol": "sum"})
 Bid_resampled = Bid.resample("1T", on="time").agg({"vol": "sum"})
 
 trades_resampled.to_csv("/home/konstantina/Statistics_Taq/output/trades_9.csv", index=True)
+Buys_trades_resampled.to_csv("/home/konstantina/Statistics_Taq/output/trades_9.csv", index=True)
+Sells_trades_resampled.to_csv("/home/konstantina/Statistics_Taq/output/trades_9.csv", index=True)
 Ask_resampled.to_csv("/home/konstantina/Statistics_Taq/output/asks_9.csv", index=True)
 Bid_resampled.to_csv("/home/konstantina/Statistics_Taq/output/bids_9.csv", index=True)
 
